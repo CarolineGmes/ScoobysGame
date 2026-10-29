@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mistério S.A. · Projetor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!-- data-fase controla qual <section class="fase"> fica visível (via CSS) -->
+<body class="tela-main" data-fase="1">
+
+  <!--
+    IMAGENS: coloque seus arquivos na pasta img/ com os nomes abaixo.
+    Enquanto o arquivo não existir, o JS mostra o emoji de data-emoji no lugar.
+  -->
+
+  <!-- Camadas de efeito (por cima de tudo, sem bloquear cliques) -->
+  <div id="flash"></div>
+  <div id="toast" class="toast"></div>
+
+  <div id="aviso-config" class="aviso-config" hidden>
+    <div>
+      <h2>Zoinks! Falta configurar o Firebase</h2>
+      <p>Cole suas credenciais em <code>firebase-config.js</code> e recarregue a página.</p>
+    </div>
+  </div>
+
+  <header class="topo">
+    <div class="logo">🔍 <span data-analogia="titulo"></span></div>
+    <div class="entrar">📱 Jogue em: <strong id="player-url"></strong></div>
+    <div class="status">
+      <span id="velma-indicador" title="Óculos da Velma">👓</span>
+      <span id="conexao" class="dot" title="Conexão com o Firebase"></span>
+    </div>
+  </header>
+
+  <main id="palco">
+
+    <!-- ================= FASE 1: Orçamento de Biscoitos ================= -->
+    <section id="fase1" class="fase">
+      <h2 class="fase-titulo"><small>Fase 1</small><span data-analogia="fase1.titulo"></span></h2>
+
+      <div class="biscoitos-box" id="biscoitos-box">
+        <img class="arte biscoito" src="img/biscoito.png" alt="Biscoito" data-emoji="🍪">
+        <div>
+          <div id="biscoitos-valor" class="contador">--</div>
+          <div class="rotulo" data-analogia="fase1.biscoitos"></div>
+        </div>
+      </div>
+
+      <!-- "Prédio": vira uma PIRÂMIDE quando o Óculos da Velma está ligado -->
+      <div class="predio">
+        <div class="andar telhado">
+          <img class="arte" src="img/telhado.png" alt="Telhado" data-emoji="🏚️">
+          <span class="andar-nome" data-analogia="fase1.telhado"></span>
+          <span class="contagem" id="e2e-count">0</span>
+        </div>
+        <div class="andar terreo">
+          <img class="arte" src="img/terreo.png" alt="Térreo" data-emoji="🚪">
+          <span class="andar-nome" data-analogia="fase1.terreo"></span>
+          <span class="contagem" id="unit-count">0</span>
+        </div>
+      </div>
+
+      <div id="fome" class="banner perigo" hidden><span data-analogia="fase1.fome"></span></div>
+    </section>
+
+    <!-- ================= FASE 2: Armadilha do Fred (TDD) ================= -->
+    <section id="fase2" class="fase">
+      <h2 class="fase-titulo"><small>Fase 2</small><span data-analogia="fase2.titulo"></span></h2>
+
+      <div class="trilha">
+        <div class="etapa" data-step="1">🔴 <span data-analogia="fase2.red"></span></div>
+        <div class="etapa" data-step="2">🟢 <span data-analogia="fase2.green"></span></div>
+        <div class="etapa" data-step="3">🛠️ <span data-analogia="fase2.refactor"></span></div>
+      </div>
+
+      <div class="armadilha">
+        <img class="arte monstro" src="img/monstro.png" alt="Monstro" data-emoji="👻">
+        <!-- Sem img/jaula.png, a jaula é desenhada em CSS (data-emoji vazio = só remove a img) -->
+        <div class="jaula" id="jaula">
+          <img src="img/jaula.png" alt="Jaula" data-emoji="">
+        </div>
+      </div>
+      <div class="rotulo" data-analogia="fase2.monstro"></div>
+
+      <div id="capturado" class="banner sucesso" hidden><span data-analogia="fase2.capturado"></span></div>
+    </section>
+
+    <!-- ================= FASE 3: Segura o Servidor ================= -->
+    <section id="fase3" class="fase" data-stage="waiting">
+      <h2 class="fase-titulo"><small>Fase 3</small><span data-analogia="fase3.titulo"></span></h2>
+
+      <div class="horda">
+        <img class="arte zumbis" src="img/zumbis.png" alt="Horda de zumbis" data-emoji="🧟🧟‍♂️🧟‍♀️🧟🧟‍♂️🧟‍♀️🧟">
+        <span data-analogia="fase3.horda"></span>
+      </div>
+
+      <div class="medidor">
+        <div class="medidor-topo">
+          <span data-analogia="fase3.latencia"></span>
+          <strong id="latencia-ms">0 ms</strong>
+        </div>
+        <div class="barra"><div class="barra-preenchida" id="barra"></div></div>
+        <div class="medidor-rodape">
+          <img class="arte escudo" id="escudo" src="img/escudo.png" alt="Escudo" data-emoji="🛡️">
+          <span data-analogia="fase3.escudo"></span>
+          <span class="cronometro" id="cronometro"></span>
+        </div>
+      </div>
+
+      <!-- Desmascaramento: a máscara voa e revela o que estava por baixo -->
+      <div class="mascara-palco">
+        <img class="arte revelado" src="img/codigo-espaguete.png" alt="Código Espaguete" data-emoji="🍝">
+        <img class="arte mascara" src="img/mascara.png" alt="Monstro mascarado" data-emoji="👻">
+      </div>
+      <div class="rotulo nome-monstro" data-analogia="fase3.monstro"></div>
+
+      <div class="mensagem3" id="mensagem3"></div>
+    </section>
+  </main>
+
+  <footer class="atalhos">
+    <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> fase ·
+    <kbd>V</kbd> Óculos da Velma ·
+    <kbd>R</kbd> resetar fase ·
+    <kbd>Espaço</kbd> soltar zumbis (fase 3) ·
+    <kbd>F</kbd> tela cheia
+  </footer>
+
+  <!-- type="module" permite usar import/export direto no navegador, sem bundler -->
+  <script type="module" src="main.js"></script>
+</body>
+</html>

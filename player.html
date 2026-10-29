@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- user-scalable=no evita zoom acidental durante o "button mashing" -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#4B0082">
+  <title>Mistério S.A. · Jogador</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!-- data-fase="0" = aguardando; main.html muda para 1, 2 ou 3 via Firebase -->
+<body class="tela-player" data-fase="0">
+
+  <div id="aviso-config" class="aviso-config" hidden>
+    <div>
+      <h2>Ruh-roh!</h2>
+      <p>O jogo ainda não foi configurado. Avise o apresentador 😉</p>
+    </div>
+  </div>
+
+  <header class="p-topo">
+    <span class="p-logo">🔍 Mistério S.A.</span>
+    <span id="conexao" class="dot" title="Conexão"></span>
+  </header>
+
+  <!-- Feedback rápido após cada toque (ex.: "-20 🍪") -->
+  <div id="p-feedback" class="p-feedback"></div>
+
+  <!-- ============ AGUARDANDO ============ -->
+  <section id="p-aguardando" class="p-fase">
+    <img class="arte" src="img/mascote.png" alt="Mascote" data-emoji="🐶">
+    <p class="p-instrucao">Conectando à Máquina do Mistério...</p>
+  </section>
+
+  <!-- ============ FASE 1 ============ -->
+  <section id="p-fase1" class="p-fase">
+    <h1 class="p-titulo" data-texto="fase1.titulo.desenho"></h1>
+    <p class="p-instrucao" data-texto="fase1.instrucao"></p>
+    <div class="p-placar">🍪 <strong id="p-biscoitos">--</strong></div>
+
+    <button class="btn-jogo btn-terreo" id="btn-unit">
+      <img class="arte" src="img/terreo.png" alt="" data-emoji="🚪">
+      <span data-texto="fase1.terreo.desenho"></span>
+      <small>Custa <span data-texto="fase1.custoUnitario"></span> biscoito</small>
+    </button>
+    <button class="btn-jogo btn-telhado" id="btn-e2e">
+      <img class="arte" src="img/telhado.png" alt="" data-emoji="🏚️">
+      <span data-texto="fase1.telhado.desenho"></span>
+      <small>Custa <span data-texto="fase1.custoE2E"></span> biscoitos</small>
+    </button>
+  </section>
+
+  <!-- ============ FASE 2 ============ -->
+  <section id="p-fase2" class="p-fase">
+    <h1 class="p-titulo" data-texto="fase2.titulo.desenho"></h1>
+    <p class="p-instrucao" data-texto="fase2.instrucao"></p>
+
+    <!-- Ordem embaralhada de propósito: a plateia precisa saber a sequência certa -->
+    <button class="btn-jogo btn-green" data-acao="2">🟢 GREEN</button>
+    <button class="btn-jogo btn-refactor" data-acao="3">🛠️ REFACTOR</button>
+    <button class="btn-jogo btn-red" data-acao="1">🔴 RED</button>
+  </section>
+
+  <!-- ============ FASE 3 ============ -->
+  <section id="p-fase3" class="p-fase" data-stage="waiting">
+    <h1 class="p-titulo" data-texto="fase3.titulo.desenho"></h1>
+    <p class="p-instrucao" id="p-msg3"></p>
+
+    <button id="btn-escudo" class="btn-escudo">
+      <img class="arte" src="img/escudo.png" alt="" data-emoji="🛡️">
+      <span data-texto="fase3.escudo.desenho"></span>
+    </button>
+    <p class="p-contador">Seus cliques: <strong id="p-cliques">0</strong></p>
+
+    <button id="btn-mascara" class="btn-jogo btn-mascara">
+      <img class="arte" src="img/mascara.png" alt="" data-emoji="👻">
+      <span data-texto="fase3.mascara.desenho"></span>
+    </button>
+
+    <img class="arte p-fim" src="img/codigo-espaguete.png" alt="Código Espaguete" data-emoji="🍝">
+  </section>
+
+  <script type="module" src="player.js"></script>
+</body>
+</html>

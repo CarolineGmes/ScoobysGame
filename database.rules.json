@@ -1,0 +1,42 @@
+{
+  "rules": {
+    ".read": true,
+
+    "gameState": {
+      ".write": true,
+      ".validate": "newData.hasChildren(['currentPhase'])",
+      "currentPhase": {
+        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 3"
+      },
+      "$outro": { ".validate": false }
+    },
+
+    "phase1": {
+      ".write": true,
+      ".validate": "newData.hasChildren(['biscoitos'])",
+      "biscoitos": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000" },
+      "unitarios": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+      "e2e":       { ".validate": "newData.isNumber() && newData.val() >= 0" },
+      "$outro":    { ".validate": false }
+    },
+
+    "phase2": {
+      ".write": true,
+      "step":   { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3" },
+      "errors": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+      "$outro": { ".validate": false }
+    },
+
+    "phase3": {
+      ".write": true,
+      "stage": {
+        ".validate": "newData.isString() && newData.val().matches(/^(waiting|running|mask|unmasked|failed)$/)"
+      },
+      "shieldPower": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+      "maskPulled":  { ".validate": "newData.isBoolean()" },
+      "$outro":      { ".validate": false }
+    },
+
+    "$outro": { ".write": false }
+  }
+}

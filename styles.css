@@ -1,0 +1,685 @@
+/* ============================================================================
+ * styles.css — MISTÉRIO S.A. · Tema Scooby-Doo + Halloween
+ * ----------------------------------------------------------------------------
+ * Índice:
+ *   1. Paleta, fontes e base
+ *   2. Imagens com tamanho padronizado (<img> ou emoji de reserva)
+ *   3. ÓCULOS DA VELMA (a Lente da Verdade)
+ *   4. Componentes compartilhados
+ *   5. Landing page (index.html)
+ *   6. Tela do projetor (main.html)
+ *   7. Tela do celular (player.html) — botões de fliperama
+ *   8. Animações
+ * ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800;900&family=Fira+Code:wght@500;700&display=swap');
+
+/* ---------------------------------------------------------------------------
+ * 1. Paleta, fontes e base
+ * ------------------------------------------------------------------------- */
+:root {
+  /* Paleta pedida */
+  --roxo: #4B0082;          /* fundo noturno */
+  --lima: #32CD32;          /* detalhes / sucesso */
+  --abobora: #FF8C00;       /* destaque / títulos */
+  --turquesa: #00CED1;      /* van / informação */
+
+  /* Variações derivadas (sombras 3D, profundidade) */
+  --roxo-claro: #6a1fb0;
+  --roxo-escuro: #2a0049;
+  --roxo-noite: #1a002e;
+  --lima-escuro: #1e8a1e;
+  --abobora-escuro: #b35f00;
+  --turquesa-escuro: #00878a;
+  --vermelho: #ff3b3b;
+  --vermelho-escuro: #a81d1d;
+  --aco: #8a98ab;
+  --aco-escuro: #4f5b6b;
+  --creme: #fff6e5;
+  --neon: #39ff14;
+
+  --fonte-titulo: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --fonte-texto: 'Nunito', system-ui, sans-serif;
+  --fonte-codigo: 'Fira Code', ui-monospace, monospace;
+
+  --raio: 24px;
+  --suave: cubic-bezier(.22, 1, .36, 1);       /* desaceleração suave */
+  --elastico: cubic-bezier(.34, 1.56, .64, 1); /* leve "quique" */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: var(--fonte-texto);
+  color: var(--creme);
+  background:
+    radial-gradient(ellipse at 50% -10%, var(--roxo-claro) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 120%, rgba(0, 206, 209, .18) 0%, transparent 50%),
+    linear-gradient(180deg, var(--roxo) 0%, var(--roxo-escuro) 100%);
+  background-attachment: fixed;
+  background-color: var(--roxo);
+  transition: background-color .5s var(--suave);
+}
+
+h1, h2, h3 { font-family: var(--fonte-titulo); font-weight: 700; letter-spacing: .5px; }
+[hidden] { display: none !important; }
+
+/* ---------------------------------------------------------------------------
+ * 2. Imagens padronizadas
+ * Cada .arte define seu tamanho com --tam. Funciona igual para:
+ *   <img class="arte" src="img/monstro.png">   → largura/altura = --tam
+ *   <span class="arte">👻</span> (reserva)      → font-size proporcional
+ * O JS troca a <img> pelo emoji se o arquivo ainda não existir.
+ * ------------------------------------------------------------------------- */
+.arte {
+  --tam: 4rem;
+  display: inline-block;
+  line-height: 1;
+  transition: filter .5s var(--suave), transform .4s var(--suave);
+}
+img.arte { width: var(--tam); height: var(--tam); object-fit: contain; }
+span.arte { font-size: calc(var(--tam) * .85); }
+.arte.grande { --tam: 7rem; }
+
+/* ---------------------------------------------------------------------------
+ * 3. ÓCULOS DA VELMA 👓
+ * O JS só alterna .velma-vision no <body>. O CSS faz o resto:
+ *  - esconde .tema-desenho e mostra .tema-real (fonte de código, verde neon)
+ *  - aplica filtro invertido nas imagens (efeito raio-X)
+ *  - escurece o fundo e adiciona linhas de varredura de monitor antigo
+ * ------------------------------------------------------------------------- */
+.tema-real { display: none; }
+
+body.velma-vision .tema-desenho { display: none; }
+body.velma-vision .tema-real {
+  display: inline;
+  font-family: var(--fonte-codigo);
+  font-weight: 700;
+  color: var(--neon);
+  text-shadow: 0 0 10px rgba(57, 255, 20, .65);
+  letter-spacing: 0;
+  animation: digitar .45s steps(8);
+}
+
+body.velma-vision img,
+body.velma-vision .arte {
+  filter: invert(1) hue-rotate(180deg) grayscale(.5) contrast(1.4)
+          drop-shadow(0 0 10px var(--neon));
+}
+
+body.velma-vision {
+  background: radial-gradient(ellipse at center, #031a06 0%, #000 80%) fixed;
+  background-color: #000;
+}
+body.velma-vision::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 60;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(57, 255, 20, .06) 0 2px, transparent 2px 4px);
+  box-shadow: inset 0 0 220px rgba(0, 0, 0, .95);
+  animation: varredura 6s linear infinite;
+}
+
+/* No modo Velma, superfícies coloridas viram "terminal" para o neon ficar legível */
+body.velma-vision :is(.banner, .toast, .andar, .etapa, .barra) {
+  background: #000 !important;
+  border-color: var(--neon) !important;
+  color: var(--neon);
+  box-shadow: 0 0 18px rgba(57, 255, 20, .35) !important;
+}
+body.velma-vision :is(.fase-titulo, .contador) { text-shadow: none; color: var(--neon); }
+
+/* ---------------------------------------------------------------------------
+ * 4. Componentes compartilhados
+ * ------------------------------------------------------------------------- */
+.dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  display: inline-block;
+  background: var(--vermelho);
+  box-shadow: 0 0 10px var(--vermelho);
+  transition: background .4s, box-shadow .4s;
+}
+.dot.on { background: var(--lima); box-shadow: 0 0 10px var(--lima); }
+
+.banner {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  font-weight: 700;
+  padding: .8rem 2.2rem;
+  border-radius: 999px;
+  border: 4px solid var(--roxo-noite);
+  box-shadow: 0 8px 0 var(--roxo-noite), 0 14px 30px rgba(0, 0, 0, .45);
+  animation: surgir .6s var(--elastico);
+}
+.banner.perigo { background: var(--vermelho); color: #fff; }
+.banner.sucesso { background: var(--lima); color: var(--roxo-noite); }
+
+.aviso-config {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: 2rem; text-align: center;
+  background: rgba(26, 0, 46, .96);
+  backdrop-filter: blur(6px);
+}
+.aviso-config h2 { font-size: 2.4rem; color: var(--abobora); margin-bottom: 1rem; }
+.aviso-config code { font-family: var(--fonte-codigo); color: var(--lima); }
+
+/* ---------------------------------------------------------------------------
+ * 5. Landing page
+ * ------------------------------------------------------------------------- */
+.pagina-index { display: grid; place-items: center; padding: 1.5rem; }
+.index-card {
+  width: min(460px, 100%);
+  display: flex; flex-direction: column; gap: 1.1rem;
+  padding: 2.5rem 1.6rem;
+  text-align: center;
+  background: rgba(26, 0, 46, .55);
+  border: 4px solid var(--lima);
+  border-radius: 32px;
+  box-shadow: 0 0 40px rgba(50, 205, 50, .25);
+  animation: surgir .7s var(--elastico);
+}
+.index-card .arte { margin: 0 auto; animation: flutuar 3s ease-in-out infinite; }
+.index-card h1 { font-size: 3.2rem; color: var(--abobora); text-shadow: 0 4px 0 var(--roxo-noite); }
+.subtitulo { font-size: 1.15rem; margin-bottom: .4rem; }
+.btn {
+  --cor: var(--turquesa); --cor-escura: var(--turquesa-escuro);
+  display: block;
+  padding: 1.1rem;
+  font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 700;
+  color: var(--roxo-noite); text-decoration: none;
+  background: var(--cor);
+  border-radius: 999px;
+  box-shadow: 0 8px 0 var(--cor-escura), 0 12px 20px rgba(0, 0, 0, .4);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--cor-escura), 0 4px 8px rgba(0, 0, 0, .4); }
+.btn-main { --cor: var(--abobora); --cor-escura: var(--abobora-escuro); }
+.btn-player { --cor: var(--lima); --cor-escura: var(--lima-escuro); }
+.dica { font-size: .95rem; opacity: .8; line-height: 1.5; margin-top: .4rem; }
+
+/* ---------------------------------------------------------------------------
+ * 6. TELA DO PROJETOR
+ * ------------------------------------------------------------------------- */
+.tela-main { display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
+
+/* Lua cheia ao fundo (decorativa) */
+.tela-main::before {
+  content: '';
+  position: absolute; top: 9vh; right: 6vw; z-index: -1;
+  width: 18vh; height: 18vh; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff9e0, #ffd98a 60%, #e0a94a);
+  box-shadow: 0 0 80px 20px rgba(255, 217, 138, .3);
+  opacity: .85;
+  transition: opacity .5s;
+}
+body.velma-vision.tela-main::before { opacity: 0; }
+
+.topo {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: .9rem 2rem;
+  background: rgba(26, 0, 46, .6);
+  border-bottom: 5px solid var(--lima);
+  box-shadow: 0 4px 24px rgba(50, 205, 50, .2);
+}
+.logo { font-family: var(--fonte-titulo); font-size: 2rem; font-weight: 700; color: var(--abobora); }
+.entrar { font-size: 1.3rem; font-weight: 800; }
+.entrar strong {
+  font-family: var(--fonte-codigo);
+  color: var(--turquesa);
+  background: rgba(0, 206, 209, .12);
+  padding: .2rem .6rem; border-radius: 10px;
+}
+.status { display: flex; align-items: center; gap: 1rem; font-size: 1.8rem; }
+#velma-indicador { opacity: .25; transition: opacity .3s, transform .3s var(--elastico); }
+body.velma-vision #velma-indicador { opacity: 1; transform: scale(1.25); }
+
+#palco {
+  flex: 1; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem 2rem;
+}
+
+/* Só a fase atual aparece: <body data-fase="N"> ↔ <section id="faseN"> */
+.fase {
+  display: none;
+  flex-direction: column; align-items: center; gap: 1.3rem;
+  width: 100%; max-width: 1200px;
+  text-align: center;
+}
+body[data-fase="1"] #fase1,
+body[data-fase="2"] #fase2,
+body[data-fase="3"] #fase3 { display: flex; animation: entrarFase .7s var(--suave); }
+
+.fase-titulo {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  line-height: 1.05;
+  color: var(--abobora);
+  text-shadow: 0 5px 0 var(--roxo-noite), 0 0 30px rgba(255, 140, 0, .35);
+}
+.fase-titulo small {
+  display: block;
+  font-size: .4em;
+  color: var(--turquesa);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: none;
+}
+body.velma-vision .fase-titulo .tema-real { font-size: .65em; }
+.rotulo { font-size: 1.6rem; font-weight: 800; }
+
+.atalhos {
+  padding: .55rem;
+  text-align: center;
+  font-size: .9rem;
+  opacity: .6;
+  background: rgba(26, 0, 46, .6);
+}
+kbd {
+  font-family: var(--fonte-codigo); font-size: .85rem;
+  padding: .1rem .5rem; margin: 0 .1rem;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+}
+
+/* ----- Fase 1: biscoitos + prédio/pirâmide ------------------------------- */
+.biscoitos-box { position: relative; display: flex; align-items: center; gap: 1.5rem; }
+.biscoito { --tam: 8rem; animation: girar 8s linear infinite; }
+.contador {
+  font-family: var(--fonte-titulo); font-weight: 700;
+  font-size: clamp(6rem, 13vw, 10rem);
+  line-height: 1;
+  color: var(--abobora);
+  text-shadow: 0 7px 0 var(--roxo-noite);
+  transition: color .4s;
+}
+.contador.baixo { color: var(--vermelho); }
+.contador.pulo { animation: pulo .45s var(--elastico); }
+
+.flutuante {
+  position: absolute; top: 0;
+  font-family: var(--fonte-titulo); font-weight: 700; font-size: 3rem;
+  color: var(--vermelho);
+  text-shadow: 0 3px 0 var(--roxo-noite);
+  pointer-events: none;
+  animation: subir 1.3s var(--suave) forwards;
+}
+
+/* Normalmente: um prédio com dois andares iguais... */
+.predio { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(820px, 92%); }
+.andar {
+  width: 100%;
+  display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.6rem;
+  font-size: 1.5rem; font-weight: 800; text-align: left;
+  border-radius: 20px;
+  border: 4px solid var(--roxo-noite);
+  transition: width .9s var(--elastico), background .5s, border-color .5s;
+}
+.andar .arte { --tam: 2.8rem; }
+.andar-nome { flex: 1; }
+.contagem { font-family: var(--fonte-titulo); font-weight: 700; font-size: 2.6rem; }
+.telhado { background: var(--abobora); color: var(--roxo-noite); box-shadow: 0 7px 0 var(--abobora-escuro); }
+.terreo  { background: var(--turquesa); color: var(--roxo-noite); box-shadow: 0 7px 0 var(--turquesa-escuro); }
+
+/* ...com o Óculos da Velma, o topo encolhe e vira a PIRÂMIDE DE TESTES */
+body.velma-vision .predio .telhado { width: 48%; font-size: 1.05rem; }
+
+/* ----- Fase 2: armadilha do Fred ----------------------------------------- */
+.trilha { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+.etapa {
+  padding: .7rem 1.5rem;
+  font-size: 1.35rem; font-weight: 800;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  border: 3px dashed rgba(255, 255, 255, .3);
+  opacity: .55;
+  transition: all .45s var(--elastico);
+}
+.etapa.feita {
+  opacity: 1;
+  transform: scale(1.08);
+  background: rgba(50, 205, 50, .2);
+  border: 3px solid var(--lima);
+  box-shadow: 0 0 20px rgba(50, 205, 50, .4);
+}
+
+.armadilha { position: relative; width: 320px; height: 320px; display: grid; place-items: center; }
+.monstro { --tam: 15rem; animation: flutuar 2.4s ease-in-out infinite; }
+
+/* A jaula fica escondida acima da tela e "despenca" ao ganhar .fechada.
+ * Com img/jaula.png ela mostra a imagem; sem ela, desenha barras em CSS. */
+.jaula {
+  position: absolute; inset: -10px;
+  display: grid; place-items: center;
+  border: 12px solid var(--aco);
+  border-radius: 18px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0 34px,
+    var(--aco-escuro) 34px 38px, #e7edf4 38px 44px, var(--aco-escuro) 44px 48px);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, .8), 0 18px 40px rgba(0, 0, 0, .6);
+  transform: translateY(-150vh);
+  transition: transform .8s var(--elastico);
+}
+.jaula:has(img) { border: none; background: none; box-shadow: none; }
+.jaula img { width: 100%; height: 100%; object-fit: contain; }
+.jaula.fechada { transform: translateY(0); }
+
+/* Flash de tela cheia (RED / GREEN / aço) */
+#flash { position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0; }
+#flash.vermelho { background: var(--vermelho); animation: piscar .9s ease-out; }
+#flash.verde    { background: var(--lima);     animation: piscar .9s ease-out; }
+#flash.aco      { background: #e7edf4;          animation: piscar .6s ease-out; }
+
+/* Aviso "Não pule etapas!" */
+.toast {
+  position: fixed; top: 22%; left: 50%; z-index: 45;
+  transform: translate(-50%, -50%) scale(0);
+  padding: 1rem 2.6rem;
+  font-family: var(--fonte-titulo); font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  color: var(--roxo-noite);
+  background: var(--abobora);
+  border: 5px solid var(--roxo-noite);
+  border-radius: 999px;
+  box-shadow: 0 10px 0 var(--abobora-escuro), 0 20px 40px rgba(0, 0, 0, .5);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.visivel { animation: toast 2.3s var(--suave) forwards; }
+#palco.tremer { animation: tremer .5s; }
+
+/* ----- Fase 3: horda, latência e máscara --------------------------------- */
+.horda { display: flex; flex-direction: column; align-items: center; gap: .4rem; font-size: 1.5rem; font-weight: 800; }
+.zumbis { --tam: 6rem; animation: marchar .9s ease-in-out infinite alternate; }
+img.zumbis { width: auto; max-width: 70vw; }
+span.zumbis { letter-spacing: .3rem; }
+#fase3[data-stage="running"] .zumbis { animation-duration: .3s; }
+
+.medidor { width: min(900px, 92%); }
+.medidor-topo, .medidor-rodape {
+  display: flex; align-items: center; gap: 1rem;
+  font-size: 1.5rem; font-weight: 800;
+}
+.medidor-topo { justify-content: space-between; margin-bottom: .6rem; }
+.medidor-rodape { margin-top: .8rem; }
+#latencia-ms { font-family: var(--fonte-codigo); font-size: 2rem; color: var(--turquesa); }
+
+.barra {
+  height: 58px;
+  overflow: hidden;
+  background: rgba(26, 0, 46, .7);
+  border: 4px solid var(--roxo-noite);
+  border-radius: 999px;
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, .6);
+}
+.barra-preenchida {
+  height: 100%; width: 0;
+  border-radius: 999px;
+  background-color: var(--lima);
+  background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, .18) 0 14px, transparent 14px 28px);
+  background-size: 40px 40px;
+  transition: background-color .4s;
+  animation: listras 1s linear infinite;
+}
+.barra-preenchida.alerta  { background-color: var(--abobora); }
+.barra-preenchida.critica { background-color: var(--vermelho); animation: listras .4s linear infinite, alarme .4s infinite alternate; }
+
+.escudo { --tam: 3.5rem; }
+.escudo.pulsar { animation: pulsar .25s var(--elastico); }
+.cronometro {
+  display: none;
+  margin-left: auto;
+  font-family: var(--fonte-titulo); font-weight: 700; font-size: 3rem;
+  color: var(--abobora);
+}
+#fase3[data-stage="running"] .cronometro { display: block; }
+
+.mensagem3 { min-height: 2.6rem; font-size: 2rem; font-weight: 900; }
+
+/* Desmascaramento: só aparece depois que a plateia sobreviveu */
+.mascara-palco, .nome-monstro { display: none; }
+.mascara-palco { position: relative; width: 300px; height: 280px; place-items: center; }
+.mascara-palco > * { grid-area: 1 / 1; }
+.mascara  { --tam: 15rem; transition: transform 1.3s cubic-bezier(.5, -.4, .6, 1), opacity 1.3s; }
+.revelado { --tam: 14rem; opacity: 0; transform: scale(.3) rotate(-20deg); transition: all .9s .55s var(--elastico); }
+
+#fase3:is([data-stage="mask"], [data-stage="unmasked"]) .mascara-palco { display: grid; }
+#fase3:is([data-stage="mask"], [data-stage="unmasked"]) :is(.horda, .medidor) { display: none; }
+#fase3[data-stage="mask"] .mascara { animation: tremelique .35s ease-in-out infinite; }
+#fase3[data-stage="unmasked"] .mascara { transform: translate(70vw, -70vh) rotate(720deg); opacity: 0; }
+#fase3[data-stage="unmasked"] .revelado { opacity: 1; transform: none; }
+#fase3[data-stage="unmasked"] .nome-monstro {
+  display: block;
+  font-family: var(--fonte-titulo); font-size: 2.4rem; color: var(--lima);
+  animation: surgir .6s 1s var(--elastico) both;
+}
+#fase3[data-stage="failed"] .mensagem3 { color: var(--vermelho); }
+
+/* ---------------------------------------------------------------------------
+ * 7. TELA DO CELULAR (mobile-first) — botões de fliperama
+ * ------------------------------------------------------------------------- */
+.tela-player {
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+  touch-action: manipulation;              /* sem zoom/atraso no duplo toque */
+  user-select: none; -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.p-topo {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .9rem 1.1rem;
+  background: rgba(26, 0, 46, .7);
+  border-bottom: 4px solid var(--lima);
+}
+.p-logo { font-family: var(--fonte-titulo); font-size: 1.35rem; font-weight: 700; color: var(--abobora); }
+
+.p-fase {
+  display: none;
+  flex: 1; flex-direction: column; gap: 1.3rem;
+  padding: 1.2rem 1.1rem 2rem;
+  text-align: center;
+}
+body[data-fase="0"] #p-aguardando,
+body[data-fase="1"] #p-fase1,
+body[data-fase="2"] #p-fase2,
+body[data-fase="3"] #p-fase3 { display: flex; animation: entrarFase .5s var(--suave); }
+#p-aguardando { justify-content: center; align-items: center; }
+#p-aguardando .arte { --tam: 9rem; animation: flutuar 2.4s ease-in-out infinite; }
+
+.p-titulo { font-size: 2.1rem; color: var(--abobora); text-shadow: 0 4px 0 var(--roxo-noite); line-height: 1.1; }
+.p-instrucao { font-size: 1.1rem; font-weight: 800; }
+.p-placar {
+  align-self: center;
+  display: flex; align-items: center; gap: .5rem;
+  padding: .3rem 1.4rem;
+  font-size: 1.6rem;
+  background: rgba(26, 0, 46, .6);
+  border: 3px solid var(--abobora);
+  border-radius: 999px;
+}
+.p-placar strong { font-family: var(--fonte-titulo); font-size: 2.6rem; color: var(--abobora); }
+.p-contador { font-size: 1.1rem; font-weight: 800; opacity: .85; }
+
+/* --- O botão de fliperama ---------------------------------------------------
+ * Camadas do efeito 3D:
+ *  1. sombra sólida embaixo (--cor-escura) = "corpo" do botão
+ *  2. sombra difusa = botão flutuando sobre o painel
+ *  3. inset claro em cima + inset escuro embaixo = volume do topo
+ *  4. gradiente radial = reflexo de luz
+ * Ao apertar, o botão desce (translateY) e a sombra sólida "some" por baixo. */
+.btn-jogo {
+  --cor: var(--turquesa);
+  --cor-escura: var(--turquesa-escuro);
+  --texto-btn: var(--roxo-noite);
+  --profundidade: 12px;
+
+  flex: 1;
+  width: 100%;
+  min-height: 130px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3rem;
+  font-family: var(--fonte-titulo); font-size: 1.9rem; font-weight: 700;
+  color: var(--texto-btn);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 18%, rgba(255, 255, 255, .45), transparent 70%),
+    var(--cor);
+  border: 4px solid rgba(0, 0, 0, .18);
+  border-radius: 36px;
+  box-shadow:
+    0 var(--profundidade) 0 var(--cor-escura),
+    0 calc(var(--profundidade) + 8px) 24px rgba(0, 0, 0, .5),
+    inset 0 4px 0 rgba(255, 255, 255, .45),
+    inset 0 -8px 0 rgba(0, 0, 0, .15);
+  margin-bottom: var(--profundidade);
+  cursor: pointer;
+  position: relative;
+  transition: transform .08s ease-out, box-shadow .08s ease-out, filter .3s, opacity .3s;
+}
+.btn-jogo:active:not(:disabled) {
+  transform: translateY(calc(var(--profundidade) - 2px));
+  box-shadow:
+    0 2px 0 var(--cor-escura),
+    0 4px 8px rgba(0, 0, 0, .45),
+    inset 0 4px 0 rgba(255, 255, 255, .3),
+    inset 0 -3px 0 rgba(0, 0, 0, .15);
+}
+.btn-jogo:disabled { opacity: .4; filter: grayscale(.9); cursor: not-allowed; }
+.btn-jogo small { font-family: var(--fonte-texto); font-size: 1rem; font-weight: 900; opacity: .85; }
+.btn-jogo .arte { --tam: 3rem; }
+
+/* Cores de cada botão */
+.btn-terreo   { --cor: var(--lima);     --cor-escura: var(--lima-escuro); }
+.btn-telhado  { --cor: var(--abobora);  --cor-escura: var(--abobora-escuro); }
+.btn-red      { --cor: var(--vermelho); --cor-escura: var(--vermelho-escuro); --texto-btn: #fff; }
+.btn-green    { --cor: var(--lima);     --cor-escura: var(--lima-escuro); }
+.btn-refactor { --cor: var(--aco);      --cor-escura: var(--aco-escuro); --texto-btn: #fff; }
+.btn-mascara  { --cor: var(--abobora);  --cor-escura: var(--abobora-escuro); animation: chamar 1.1s ease-in-out infinite; }
+
+/* Selo de "etapa concluída" na fase 2 */
+.btn-jogo.feito::after {
+  content: '✔';
+  position: absolute; top: .6rem; right: 1rem;
+  width: 2.2rem; height: 2.2rem;
+  display: grid; place-items: center;
+  font-size: 1.3rem; color: var(--roxo-noite);
+  background: var(--creme);
+  border-radius: 50%;
+  animation: surgir .4s var(--elastico);
+}
+
+/* Botão-cogumelo gigante e redondo para o "button mashing" */
+.btn-escudo {
+  --cor: var(--turquesa);
+  --cor-escura: var(--turquesa-escuro);
+  --profundidade: 16px;
+
+  width: min(78vw, 340px);
+  aspect-ratio: 1;
+  margin: .5rem auto calc(var(--profundidade) + 1rem);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem;
+  font-family: var(--fonte-titulo); font-size: 1.7rem; font-weight: 700;
+  color: var(--roxo-noite);
+  background:
+    radial-gradient(circle at 38% 28%, rgba(255, 255, 255, .6), transparent 45%),
+    var(--cor);
+  border: 6px solid rgba(0, 0, 0, .2);
+  border-radius: 50%;
+  /* anel escuro em volta = a "base" do fliperama */
+  outline: 10px solid var(--roxo-noite);
+  outline-offset: 4px;
+  box-shadow:
+    0 var(--profundidade) 0 var(--cor-escura),
+    0 calc(var(--profundidade) + 10px) 30px rgba(0, 0, 0, .55),
+    0 0 50px rgba(0, 206, 209, .45),
+    inset 0 -12px 0 rgba(0, 0, 0, .15);
+  touch-action: none;
+  cursor: pointer;
+  transition: transform .06s ease-out, box-shadow .06s ease-out, filter .3s, opacity .3s;
+}
+.btn-escudo .arte { --tam: 6rem; }
+.btn-escudo:active:not(:disabled),
+.btn-escudo.apertado {
+  transform: translateY(calc(var(--profundidade) - 3px));
+  box-shadow:
+    0 3px 0 var(--cor-escura),
+    0 6px 12px rgba(0, 0, 0, .5),
+    0 0 70px rgba(0, 206, 209, .7),
+    inset 0 -4px 0 rgba(0, 0, 0, .15);
+}
+.btn-escudo.apertado { animation: apertar .12s ease-out; }
+.btn-escudo:disabled { opacity: .4; filter: grayscale(.9); }
+
+/* O que aparece em cada estágio da fase 3 */
+#p-fase3 :is(#btn-mascara, .p-fim) { display: none; }
+#p-fase3[data-stage="mask"] :is(#btn-escudo, .p-contador) { display: none; }
+#p-fase3[data-stage="mask"] #btn-mascara { display: flex; }
+#p-fase3[data-stage="unmasked"] :is(#btn-escudo, .p-contador) { display: none; }
+#p-fase3[data-stage="unmasked"] .p-fim {
+  display: block; margin: auto; --tam: 11rem;
+  animation: surgir .7s var(--elastico);
+}
+
+/* Balão de feedback após cada toque */
+.p-feedback {
+  position: fixed; bottom: 2rem; left: 50%; z-index: 30;
+  transform: translateX(-50%);
+  padding: .6rem 1.6rem;
+  font-family: var(--fonte-titulo); font-size: 1.6rem; font-weight: 700;
+  color: var(--roxo-noite);
+  background: var(--lima);
+  border-radius: 999px;
+  box-shadow: 0 6px 0 var(--lima-escuro), 0 10px 20px rgba(0, 0, 0, .4);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.p-feedback[data-tipo="erro"] { background: var(--vermelho); color: #fff; box-shadow: 0 6px 0 var(--vermelho-escuro), 0 10px 20px rgba(0, 0, 0, .4); }
+.p-feedback.mostrar { animation: feedback 1.3s var(--suave) forwards; }
+
+/* ---------------------------------------------------------------------------
+ * 8. Animações
+ * ------------------------------------------------------------------------- */
+@keyframes entrarFase { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes surgir     { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes digitar    { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes varredura  { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+@keyframes girar      { to { transform: rotate(360deg); } }
+@keyframes pulo       { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.18) rotate(-3deg); } }
+@keyframes subir      { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-150px); opacity: 0; } }
+@keyframes flutuar    { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes piscar     { 0% { opacity: .85; } 20% { opacity: .1; } 40% { opacity: .7; } 100% { opacity: 0; } }
+@keyframes tremer {
+  0%, 100% { transform: translateX(0); }
+  15%, 55% { transform: translateX(-22px) rotate(-1deg); }
+  35%, 75% { transform: translateX(22px) rotate(1deg); }
+}
+@keyframes toast {
+  0%      { transform: translate(-50%, -50%) scale(0) rotate(-8deg); opacity: 1; }
+  15%     { transform: translate(-50%, -50%) scale(1.12) rotate(2deg); }
+  25%, 80%{ transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; }
+  100%    { transform: translate(-50%, -50%) scale(.85); opacity: 0; }
+}
+@keyframes marchar    { from { transform: translateX(-10px); } to { transform: translateX(10px); } }
+@keyframes listras    { from { background-position: 0 0; } to { background-position: 40px 0; } }
+@keyframes alarme     { from { filter: brightness(1); } to { filter: brightness(1.35); } }
+@keyframes pulsar     { 50% { transform: scale(1.4); } }
+@keyframes tremelique { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes apertar    { 50% { filter: brightness(1.15); } }
+@keyframes chamar     { 50% { transform: scale(1.04); } }
+@keyframes feedback {
+  0%       { opacity: 0; transform: translate(-50%, 24px) scale(.9); }
+  20%, 70% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100%     { opacity: 0; transform: translate(-50%, -24px); }
+}
+
+/* Acessibilidade: menos movimento para quem pede */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

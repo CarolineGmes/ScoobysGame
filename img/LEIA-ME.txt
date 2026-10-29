@@ -1,0 +1,14 @@
+Coloque aqui suas imagens (PNG com fundo transparente fica melhor).
+Enquanto um arquivo não existir, o jogo mostra um emoji no lugar.
+
+logo.png              -> lupa da landing page            (🔍)
+mascote.png           -> tela de espera no celular       (🐶)
+biscoito.png          -> fase 1, contador                (🍪)
+telhado.png           -> fase 1, andar E2E               (🏚️)
+terreo.png            -> fase 1, andar unitário          (🚪)
+monstro.png           -> fase 2, fantasma do bug         (👻)
+jaula.png             -> fase 2, armadilha (sem ela, barras desenhadas em CSS)
+zumbis.png            -> fase 3, horda (imagem larga)    (🧟...)
+escudo.png            -> fase 3, escudo Lighthouse       (🛡️)
+mascara.png           -> fase 3, monstro mascarado       (👻)
+codigo-espaguete.png  -> fase 3, revelação final         (🍝)

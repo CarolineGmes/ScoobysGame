@@ -1,0 +1,20 @@
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+
+# Firebase CLI
+.firebase/
+.firebaserc
+firebase-debug.log*
+database-debug.log*
+
+# Node (caso alguém use npx/serve ou ferramentas locais)
+node_modules/
+npm-debug.log*
+
+# Variáveis locais e pacotes gerados
+.env
+.env.*
+*.zip

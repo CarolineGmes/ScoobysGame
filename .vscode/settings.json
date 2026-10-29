@@ -1,0 +1,7 @@
+{
+  // Aceita conexões de outros aparelhos da rede (celulares da plateia)
+  "liveServer.settings.host": "0.0.0.0",
+  "liveServer.settings.port": 5500,
+  // Evita recarregar o telão no meio da apresentação ao salvar arquivos de documentação
+  "liveServer.settings.ignoreFiles": [".vscode/**", "**/*.md", "docs/**"]
+}
